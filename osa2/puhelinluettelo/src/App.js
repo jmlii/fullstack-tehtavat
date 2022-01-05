@@ -65,7 +65,6 @@ const App = () => {
       const personToUpdate = persons.find(person => person.name===newName)
       updateNumber(personToUpdate.id, newNumber)
     }
-
   }
 
   const addPerson = (personObject) => {
@@ -79,6 +78,9 @@ const App = () => {
         console.log('added', returnedPerson)
         showMessage(`Added ${returnedPerson.name}`, 'success')
       })
+      .catch(error => {
+        showMessage(error.response.data.error, 'error')
+      })
   }
 
   const updateNumber = (id, newNumber) => {
@@ -89,6 +91,7 @@ const App = () => {
     personService
       .update(id, updatedPerson)
       .then(returnedPerson => {
+        if (!returnedPerson) {throw new Error('person does not exist')}
         setPersons(persons.map(person => person.id !== id ? person : returnedPerson))
         setNewName('')
         setNewNumber('')
@@ -96,11 +99,16 @@ const App = () => {
         showMessage(`Updated ${returnedPerson.name}'s number`, 'success')
       })
       .catch(error => {
-        showMessage(`Cannot update, ${personToUpdate.name} does not exist in your phonebook`, 'error')
-        setPersons(persons.filter(person => person.id !== id))
+        if (error.response) {
+          showMessage(error.response.data.error, 'error') 
+        } else {
+          console.log(error)
+          showMessage(`Cannot update, ${personToUpdate.name} does not exist in your phonebook`, 'error')
+          setPersons(persons.filter(person => person.id !== id))
+        }
       })
   }
-
+  
   const removePerson = (id) => {
     const personToRemove = persons.find(p => p.id===id)
     const removedName = personToRemove.name
