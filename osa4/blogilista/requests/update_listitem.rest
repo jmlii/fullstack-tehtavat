@@ -1,9 +1,9 @@
-POST http://localhost:3003/api/blogs
+PUT http://localhost:3003/api/blogs/61d8543a2e1ee2a7021bbd0a
 Content-Type: application/json
 
 {
   "title": "Unelmia ja toimistoja",
   "author": "Leevi Leaver",
   "url": "http://toimistounelmia.fi",
-  "likes": 4
+  "likes": 5
 }
