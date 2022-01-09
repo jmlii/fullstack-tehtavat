@@ -30,7 +30,7 @@ describe('when initially some blogs are saved', () => {
     expect(response.body[0].id).toBeDefined()
   })
 
-  describe('addition of a new blog', () => {
+  describe('addition of a new blog with valid user authentication', () => {
     let token
     beforeAll(async () => {
       await User.deleteMany({})
@@ -96,6 +96,22 @@ describe('when initially some blogs are saved', () => {
         .set('Authorization', `bearer ${token}`)
         .send(newBlog)
         .expect(400)
+    })
+
+    test('fails with statuscode 401 unauthorized if request has no valid token' , async () => {
+      const tokenNull = null
+      const newBlog = {
+        title: 'Testiblogi',
+        author: 'Testattava',
+        url: 'http://testiblogaus.fi',
+        likes: 3,
+      }
+
+      await api
+        .post('/api/blogs')
+        .set('Authorization', `bearer ${tokenNull}`)
+        .send(newBlog)
+        .expect(401)
     })
   })
 })
