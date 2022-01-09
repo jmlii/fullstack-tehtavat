@@ -1,9 +1,10 @@
 POST http://localhost:3003/api/blogs
 Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9. ...
 
 {
   "title": "Unelmia ja toimistoja",
   "author": "Leevi Leaver",
   "url": "http://toimistounelmia.fi",
-  "likes": 4
+  "likes": 8
 }
