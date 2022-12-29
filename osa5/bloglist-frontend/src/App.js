@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import Bloglist from './components/Bloglist'
 import BlogForm from './components/BlogForm'
 import LoginForm from './components/LoginForm'
 import Notification from './components/Notification'
+import Togglable from './components/Togglable'
 import blogService from './services/blogs'
 import loginService from './services/login'
 
@@ -11,11 +12,9 @@ const App = () => {
   const [username, setUsername] = useState('') 
   const [password, setPassword] = useState('')
   const [user, setUser] = useState(null)
-  const [blogTitle, setBlogTitle] = useState('')
-  const [blogAuthor, setBlogAuthor] = useState('')
-  const [blogUrl, setBlogUrl] = useState('')
   const [notificationMessage, setNotificationMessage] = useState(null)
   const [notificationType, setNotificationType] = useState('')
+  const blogFormRef = useRef()
 
   useEffect(() => {
     blogService.getAll().then(blogs =>
@@ -31,6 +30,15 @@ const App = () => {
       blogService.setToken(user.token)
     }
   }, [])
+
+  const showNotification = (message, type) => {
+    setNotificationMessage(message)
+    setNotificationType(type)
+    setTimeout(() => {
+      setNotificationMessage(null)
+      setNotificationType('')
+    }, 5000)
+  }
 
   const handleLogin = async (event) => {
     event.preventDefault()
@@ -57,31 +65,19 @@ const App = () => {
     window.localStorage.removeItem('loggedBlogAppUser')
   }
 
-  const handleAddBlog = (event) => {
-    event.preventDefault()
-    const newBlog = {
-      title: blogTitle,
-      author: blogAuthor,
-      url: blogUrl
-    }
-    setBlogTitle('')
-    setBlogAuthor('')
-    setBlogUrl('')
-
-    blogService.create(newBlog).then(savedBlog => {
-      setBlogs(blogs.concat(savedBlog))
-    })
-    showNotification('New blog added', 'info')
+  const handleAddBlog = (blogObject) => {
+    blogFormRef.current.toggleVisibility()
+    blogService
+      .create(blogObject)
+      .then(returnedBlog => {
+        setBlogs(blogs.concat(returnedBlog))
+        showNotification('New blog added', 'info')
+      })
+      .catch(error => {
+        showNotification('Something went wrong', 'alert')
+      })
   }
 
-  const showNotification = (message, type) => {
-    setNotificationMessage(message)
-    setNotificationType(type)
-    setTimeout(() => {
-      setNotificationMessage(null)
-      setNotificationType('')
-    }, 5000)
-  }
 
   return (
     <div>
@@ -102,15 +98,9 @@ const App = () => {
           <Bloglist 
             blogs={blogs} 
           />
-          <BlogForm 
-            handleAddBlog={handleAddBlog}
-            title={blogTitle}
-            titleOnChange={({ target }) => setBlogTitle(target.value)}
-            author={blogAuthor}
-            authorOnChange={({ target }) => setBlogAuthor(target.value)}
-            url={blogUrl}
-            urlOnChange={({ target }) => setBlogUrl(target.value)}
-          />
+          <Togglable buttonLabel="Add new blog" ref={blogFormRef}>
+            <BlogForm createBlog={handleAddBlog}/>
+          </Togglable>
         </div>
       }
 
