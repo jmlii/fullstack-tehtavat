@@ -2,7 +2,7 @@ import { useState } from 'react'
 import PropTypes from 'prop-types'
 
 const BlogForm = ({ createBlog }) => {
-    
+
   const [blogTitle, setBlogTitle] = useState('')
   const [blogAuthor, setBlogAuthor] = useState('')
   const [blogUrl, setBlogUrl] = useState('')
@@ -29,35 +29,38 @@ const BlogForm = ({ createBlog }) => {
     setBlogUrl('')
   }
 
-  return (  
+  return (
     <form onSubmit={addBlog}>
       <h2>Add a new blog</h2>
       <div>
-        title
-          <input
-            type="text"
-            value={blogTitle}
-            name="Title"
-            onChange={handleTitleChange}
-          />
+        <label htmlFor='title-input'>Title</label>
+        <input
+          type="text"
+          value={blogTitle}
+          name="Title"
+          onChange={handleTitleChange}
+          id='title-input'
+        />
       </div>
       <div>
-        author
-          <input
-            type="text"
-            value={blogAuthor}
-            name="Author"
-            onChange={handleAuthorChange}
-          />
+        <label htmlFor='author-input'>Author</label>
+        <input
+          type="text"
+          value={blogAuthor}
+          name="Author"
+          onChange={handleAuthorChange}
+          id='author-input'
+        />
       </div>
       <div>
-        url
-          <input 
-            type="url"
-            value={blogUrl}
-            name="Url"
-            onChange={handleUrlChange}
-          />
+        <label htmlFor='url-input'>URL</label>
+        <input
+          type="url"
+          value={blogUrl}
+          name="Url"
+          onChange={handleUrlChange}
+          id='url-input'
+        />
       </div>
       <button type="submit">Add</button>
     </form>
