@@ -14,34 +14,34 @@ const Blog = ({ blog, currentUser, handleLike, handleRemove }) => {
   }
 
   return (
-  <div style={blogStyle}>
-    <div>
-      {blog.title} - {blog.author} 
-      <button onClick={() => setDetailsVisible(!detailsVisible)}>View</button>
-    </div>
-    {detailsVisible && <>
+    <div style={blogStyle}>
       <div>
-        {blog.url}
+        {blog.title} - {blog.author}
+        <button onClick={() => setDetailsVisible(!detailsVisible)}>View</button>
       </div>
-      <div>
-        Likes {blog.likes} 
-        <button onClick={() => handleLike(blog)}>Like</button>
-      </div>
-      <div>
-        Added by {blog.user ? blog.user.name : 'unknown'}
-      </div>
-      {blog.user && currentUser.username === blog.user.username && <>
-        <button onClick={() => handleRemove(blog)}>Remove</button>
+      {detailsVisible && <>
+        <div>
+          {blog.url}
+        </div>
+        <div>
+          Likes {blog.likes}
+          <button onClick={() => handleLike(blog)}>Like</button>
+        </div>
+        <div>
+          Added by {blog.user ? blog.user.name : 'unknown'}
+        </div>
+        {blog.user && currentUser.username === blog.user.username && <>
+          <button onClick={() => handleRemove(blog)}>Remove</button>
+        </>}
       </>}
-    </>}
-  </div> 
+    </div>
   )
 }
 
 Blog.propTypes = {
   blog: PropTypes.shape({
     author: PropTypes.string,
-    likes: PropTypes.any,
+    likes: PropTypes.number,
     title: PropTypes.string,
     url: PropTypes.string,
     user: PropTypes.shape({
