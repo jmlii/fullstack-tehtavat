@@ -17,9 +17,10 @@ const App = () => {
   const blogFormRef = useRef()
 
   useEffect(() => {
-    blogService.getAll().then(blogs =>
+    blogService.getAll().then(blogs => {
+      blogs.sort((blog1, blog2) => blog2.likes - blog1.likes) 
       setBlogs( blogs )
-    )  
+    })  
   }, [])
 
   useEffect(() => {
@@ -78,6 +79,35 @@ const App = () => {
       })
   }
 
+  const handleUpdateBlog = (blogObject) => {
+    blogService
+      .update(blogObject.id, blogObject)
+      .then(updatedBlog => {
+        setBlogs(blogs.map(blog => blog.id === blogObject.id ? updatedBlog : blog))
+      })
+      .catch(error => {
+        showNotification('Could not update', 'alert')
+      })
+  }
+
+  const handleLikeBlog = (blog) => {
+    const updatedBlogItem = {...blog, likes: blog.likes + 1, user: blog.user ? blog.user : null}
+    handleUpdateBlog(updatedBlogItem) 
+  }
+
+  const handleRemoveBlog = (blog) => {
+    if (window.confirm(`Confirm removal of blog ${blog.title} by ${blog.author}.`)) {
+      blogService
+        .remove(blog.id)
+        .then(() => {
+          setBlogs(blogs.filter(b => b.id !== blog.id))
+          showNotification(`Removed blog ${blog.title} by ${blog.author}.`, 'grey')
+        })
+        .catch(error => {
+          showNotification('Something went wrong.', 'alert')
+        })
+    }
+  }
 
   return (
     <div>
@@ -97,8 +127,11 @@ const App = () => {
           <button onClick={handleLogout}>Logout</button>
           <Bloglist 
             blogs={blogs} 
+            currentUser={user} 
+            handleBlogLike={handleLikeBlog} 
+            handleBlogRemove={handleRemoveBlog}
           />
-          <Togglable buttonLabel="Add new blog" ref={blogFormRef}>
+          <Togglable buttonLabel='Add new blog' ref={blogFormRef}>
             <BlogForm createBlog={handleAddBlog}/>
           </Togglable>
         </div>
