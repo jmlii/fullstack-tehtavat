@@ -31,7 +31,7 @@ const Blog = ({ blog, currentUser, handleLike, handleRemove }) => {
           Added by {blog.user ? blog.user.name : 'unknown'}
         </div>
         {blog.user && currentUser.username === blog.user.username && <>
-          <button onClick={() => handleRemove(blog)}>Remove</button>
+          <button onClick={() => handleRemove(blog)} id='remove-button'>Remove</button>
         </>}
       </>}
     </div>
