@@ -1,6 +1,5 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
-const User = require('../models/user')
 
 blogsRouter.post('/', async (request, response) => {
   const body = request.body
@@ -60,7 +59,7 @@ blogsRouter.put('/:id', async (request, response) => {
     .findByIdAndUpdate(request.params.id, blog, { new: true, runValidators: true, context: 'query' })
     . populate('user', { username: 1, name: 1 })
 
-    response.json(updatedBlog)
+  response.json(updatedBlog)
 })
 
 
