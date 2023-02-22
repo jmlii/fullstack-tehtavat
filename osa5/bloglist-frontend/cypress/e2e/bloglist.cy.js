@@ -6,7 +6,13 @@ describe('Bloglist app', function() {
       username: 'tinatest',
       password: 'secret'
     }
+    const user2 = {
+      name: 'Tessa Test',
+      username: 'tessatest',
+      password: 'sercet'
+    }
     cy.request('POST', 'http://localhost:3003/api/users/', user)
+    cy.request('POST', 'http://localhost:3003/api/users/', user2)
     cy.visit('http://localhost:3000')
   })
 
@@ -66,6 +72,30 @@ describe('Bloglist app', function() {
         cy.get('html')
           .should('contain', 'Test blog 2 - Blog Author 2')
           .and('not.contain', 'Test blog 1 - Blog Author 1')
+      })
+      it('the remove button for a blog is not visible if the blog was not added by current user', function() {
+        cy.login({ username:'tessatest', password:'sercet' })
+        cy.contains('Test blog 2')
+          .contains('View')
+          .click()
+        cy.get('html')
+          .should('not.contain', 'Remove')
+      })
+      it.only('blogs are ordered by likes in descending order', function() {
+        cy.get('.blog').eq(0).should('contain', 'Test blog 1')
+        cy.get('.blog').eq(1).should('contain', 'Test blog 2')
+        cy.contains('Test blog 2')
+          .contains('View')
+          .click()
+        cy.contains('Like')
+          .click()
+        cy.contains('Likes 1')
+        cy.contains('Test blog 1')
+          .contains('View')
+          .click()
+        cy.get('.blog').eq(0).should('contain', 'Test blog 2')
+        cy.get('.blog').eq(1).should('contain', 'Test blog 1')
+
       })
     })
   })

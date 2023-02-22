@@ -83,7 +83,9 @@ const App = () => {
     blogService
       .update(blogObject.id, blogObject)
       .then(updatedBlog => {
-        setBlogs(blogs.map(blog => blog.id === blogObject.id ? updatedBlog : blog))
+        setBlogs(blogs
+          .map(blog => blog.id === blogObject.id ? updatedBlog : blog)
+          .sort((blog1, blog2) => blog2.likes - blog1.likes))
       })
       .catch(() => {
         showNotification('Could not update', 'alert')
